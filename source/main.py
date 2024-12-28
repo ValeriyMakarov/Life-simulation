@@ -7,6 +7,8 @@ import pygame
 import logging
 import re
 
+# указать вечный корень типа C:/Programs...
+
 ROOT = re.sub('(.*Life-simulation).*', r'\1', os.getcwd())
 CONFIG_PATH: str = os.path.join(ROOT, 'config.ini')
 
@@ -22,13 +24,13 @@ class BackgroundGroup(pygame.sprite.Group):
         self.display_surface=pygame.display.get_surface()
         self.offset = pygame.Vector2()
 
-    def draw(self, offset, zoom):
-        k_zoom = get_k_zoom(zoom)
+    def draw(self, offset):
+        # k_zoom = get_k_zoom(zoom)
         self.offset.x = offset[0]
         self.offset.y = offset[1]
         for i in self.sprites():
-            if i.k_zoom != k_zoom:
-                i.scale(k_zoom)
+            # if i.k_zoom != k_zoom:
+            #     i.scale(k_zoom)
             self.display_surface.blit(
                 i.image,
                 i.rect.topleft+self.offset)
@@ -108,7 +110,7 @@ def loop() -> None:
                 log.debug(f'{zoom=}')
 
         screen.fill('white')
-        background.draw(offset, zoom)
+        background.draw(offset)
         pygame.display.flip()
 
         clock.tick(60)
