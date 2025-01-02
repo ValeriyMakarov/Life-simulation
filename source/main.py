@@ -1,22 +1,10 @@
 import math
 import random
-import sys
-import configparser
-import os
 import pygame
-import logging
-import re
 
-# указать вечный корень типа C:/Programs...
+from core.init_utils import LoggerInitializer, ConfigInitializer
 
-ROOT = re.sub('(.*Life-simulation).*', r'\1', os.getcwd())
-CONFIG_PATH: str = os.path.join(ROOT, 'config.ini')
-
-log = logging.getLogger()
-
-def get_k_zoom(x):
-    # todo при 0 зуме ~ 1. нужно найти другую формулу
-    return 10/(1+math.e**(-x+11/5))
+log: LoggerInitializer
 
 class BackgroundGroup(pygame.sprite.Group):
     def __init__(self):
@@ -25,12 +13,11 @@ class BackgroundGroup(pygame.sprite.Group):
         self.offset = pygame.Vector2()
 
     def draw(self, offset):
-        # k_zoom = get_k_zoom(zoom)
+
         self.offset.x = offset[0]
         self.offset.y = offset[1]
         for i in self.sprites():
-            # if i.k_zoom != k_zoom:
-            #     i.scale(k_zoom)
+
             self.display_surface.blit(
                 i.image,
                 i.rect.topleft+self.offset)
@@ -45,31 +32,7 @@ class BackgroundElement(pygame.sprite.Sprite):
         self.rect.topleft = (x, y)
         self.k_zoom = 1
 
-    def scale(self, k_zoom):
-        self.image = pygame.transform.scale(
-            self.image,
-            (self.rect.width * k_zoom, self.rect.height * k_zoom)
-        )
-        self.rect = self.image.get_rect()
 
-def initialize_settings() -> None:
-    config = configparser.ConfigParser()
-
-    if not config.read(CONFIG_PATH):
-        config['logger'] = {
-            'level': 'DEBUG',
-            'log_folder': 'logs'
-        }
-        with open(CONFIG_PATH, 'w') as file:
-            config.write(file)
-
-    logging.basicConfig(
-        level=logging.getLevelName(config['logger']['level'].upper()),
-        datefmt='%y/%m/%d %H:%M:%S',
-        style='{',
-        format='[{asctime} {levelname}] : {module}.{funcName}\n\t{message}',
-        stream=sys.stdout
-    )
 
 
 def loop() -> None:
@@ -80,12 +43,13 @@ def loop() -> None:
     running = True
 
     background = BackgroundGroup()
-    for i in range(150):
-        for j in range(100):
+    for i in range(250):
+        for j in range(250):
             x=i*10
             y=j*10
             n=BackgroundElement(x,y)
             background.add(n)
+
     dragging = False
     offset = (0,0)
     zoom = 0
@@ -119,5 +83,6 @@ def loop() -> None:
 
 
 if __name__ == '__main__':
-    initialize_settings()
+    config = ConfigInitializer()
+    log = LoggerInitializer(level=config['logger']['level'])
     loop()
