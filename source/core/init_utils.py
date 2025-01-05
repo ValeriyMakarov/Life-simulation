@@ -20,7 +20,7 @@ class LoggerInitializer:
     #             stream=sys.stdout
     #         )
     #     return logging.getLogger()
-    log: Logger
+    log: Logger = None
 
     @classmethod
     def init(cls, level='INFO'):
