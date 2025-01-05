@@ -1,10 +1,11 @@
-import math
+import logging
 import random
 import pygame
 
 from core.init_utils import LoggerInitializer, ConfigInitializer
+from core.engine import Engine
 
-log: LoggerInitializer
+log: logging.Logger
 
 class BackgroundGroup(pygame.sprite.Group):
     def __init__(self):
@@ -81,8 +82,15 @@ def loop() -> None:
     pygame.quit()
     log.info('Game stopped.')
 
+# scene = pygame.rect.Rect((0,0),)
+
 
 if __name__ == '__main__':
-    config = ConfigInitializer()
-    log = LoggerInitializer(level=config['logger']['level'])
-    loop()
+    ConfigInitializer.init()
+    LoggerInitializer.init(
+        ConfigInitializer.config.get('logger', 'level', fallback='INFO')
+    )
+    log = LoggerInitializer.log
+    log.info('12')
+    engine = Engine()
+    # log.info(engine.scene_size())
